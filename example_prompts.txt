@@ -1,0 +1,64 @@
+EXAMPLE PROMPTS — Medical Diagnosis Support & Referral Router
+=============================================================
+
+--- ROUTINE CASES (all 4 agents run: intake → triage → diagnosis → referral) ---
+
+1. Common Cold / Flu
+   "I have a runny nose, mild headache, and sore throat for the past 2 days. I am 25 years old with no prior conditions."
+
+2. Chickenpox (with enough detail)
+   "I have itchy blisters all over my body and face, including my scalp. I have a mild fever and feel tired. I am 8 years old and have not been vaccinated for chickenpox."
+
+3. Migraine
+   "I have been having severe headaches on one side of my head for the past 3 days. Light and sound bother me a lot and I feel nauseous. I am 32 years old."
+
+4. Urinary Tract Infection
+   "I feel a burning sensation when I urinate and I need to go very frequently. My lower abdomen hurts. I am a 27-year-old woman with no prior conditions."
+
+5. Acid Reflux / GERD
+   "I have a burning feeling in my chest after eating, especially at night. It feels like food is coming back up my throat. I am 40 years old and slightly overweight."
+
+6. Skin Rash / Allergy
+   "I have red itchy patches on my arms and neck that appeared after I used a new soap. There is no pus but it is very uncomfortable. I am 22 years old."
+
+7. Back Pain
+   "I have had lower back pain for a week after lifting heavy boxes. It hurts more when I sit for long periods. I am 35 years old with no prior back problems."
+
+8. Diabetes Symptoms
+   "I have been feeling very thirsty and urinating a lot. I feel tired all the time and my vision has been slightly blurry. I am 45 years old and my father had diabetes."
+
+9. Anxiety / Panic Symptoms
+   "I have been experiencing a racing heart, sweating, and shortness of breath in stressful situations. It has been happening for 2 months. I am 29 years old."
+
+10. Pink Eye (Conjunctivitis)
+    "My eyes are red, watery, and sticky with yellow discharge in the morning. It started in one eye and spread to the other. I am 15 years old."
+
+
+--- URGENT CASES (triage returns urgent, all agents run) ---
+
+11. Possible Appendicitis
+    "I have severe pain in my lower right abdomen that started around my belly button and moved. I have a slight fever and feel nauseous. I am 19 years old."
+
+12. High Fever with Rash
+    "I have had a fever of 103°F for 2 days and red spots are appearing on my body. I feel very weak and have a headache. I am 30 years old."
+
+13. Possible Kidney Infection
+    "I have severe pain in my lower back and side, high fever, and chills. I also have painful urination. I am 33 years old."
+
+
+--- EMERGENCY CASES (pipeline short-circuits — diagnosis and referral are skipped) ---
+
+14. Heart Attack Symptoms
+    "I have severe chest pain that is spreading to my left arm and jaw. I am sweating a lot and feel like I cannot breathe. Started 15 minutes ago."
+
+15. Stroke Symptoms
+    "Suddenly my face drooped on one side, my left arm is very weak, and my speech is slurred. This started about 20 minutes ago. I am 58 years old."
+
+16. Severe Allergic Reaction
+    "I ate peanuts and now my throat is swelling up, I cannot breathe properly, and I have hives all over my body. This is happening right now."
+
+17. Difficulty Breathing
+    "I cannot breathe. My chest feels very tight and I am gasping for air. This came on suddenly with no warning."
+
+18. Loss of Consciousness History
+    "I just woke up on the floor. I think I lost consciousness for a few minutes. I have a severe headache and I am confused. I am 50 years old."

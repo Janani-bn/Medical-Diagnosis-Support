@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medical Referral Router</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Medical Diagnosis Support</h1>
+      <p class="subtitle">Describe your symptoms and we'll help route you to the right specialist.</p>
+    </header>
+
+    <div id="emergency-banner" class="hidden">
+      <div class="emergency-icon">🚨</div>
+      <h2>EMERGENCY</h2>
+      <p id="emergency-text"></p>
+    </div>
+
+    <div id="main-content">
+      <div class="input-section">
+        <textarea id="symptom-input" placeholder="Describe your symptoms... (e.g. I've had chest pain and shortness of breath for 2 days)" rows="4"></textarea>
+        <button id="submit-btn" onclick="submitSymptoms()">Analyze Symptoms</button>
+      </div>
+
+      <div id="results" class="hidden">
+        <div id="urgency-badge-container">
+          <span id="urgency-badge"></span>
+          <span id="urgency-reason"></span>
+        </div>
+
+        <div class="referral-card" id="referral-card">
+          <h2>Referral Summary</h2>
+
+          <div class="card-section">
+            <h3>Possible Conditions</h3>
+            <ul id="conditions-list"></ul>
+            <p class="disclaimer" id="disclaimer-text"></p>
+          </div>
+
+          <div class="card-section">
+            <h3>Recommended Specialist</h3>
+            <p id="specialist-name"></p>
+            <p id="specialist-reasoning" class="secondary-text"></p>
+          </div>
+        </div>
+
+        <details class="trace-panel">
+          <summary>Agent Trace (debug)</summary>
+          <pre id="trace-output"></pre>
+        </details>
+      </div>
+
+      <div id="loading" class="hidden">
+        <div class="spinner"></div>
+        <p>Running agents...</p>
+        <div class="agent-steps">
+          <span class="agent-step">Intake</span>
+          <span class="agent-step">Triage</span>
+          <span class="agent-step">Diagnosis</span>
+          <span class="agent-step">Referral</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
