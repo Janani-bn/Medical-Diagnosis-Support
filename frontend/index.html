@@ -26,9 +26,48 @@
       </div>
 
       <div id="results" class="hidden">
+
+        <!-- Urgency + Jev triage insights -->
         <div id="urgency-badge-container">
           <span id="urgency-badge"></span>
           <span id="urgency-reason"></span>
+        </div>
+
+        <!-- Feature 2: Escalation warning -->
+        <div id="escalation-warning" class="escalation-warning hidden">
+          ⚡ Jev was uncertain — automatically escalated to <strong>urgent</strong> for safety
+        </div>
+
+        <!-- Feature 1 + 3: Triage confidence bar & probability distribution -->
+        <div id="jev-triage-panel" class="jev-panel hidden">
+          <div class="jev-panel-title">Jev Triage Insights</div>
+
+          <div class="jev-metric-row">
+            <span class="jev-metric-label">Triage confidence</span>
+            <div class="conf-track">
+              <div id="triage-conf-fill" class="conf-fill"></div>
+            </div>
+            <span id="triage-conf-pct" class="conf-pct"></span>
+          </div>
+
+          <div class="prob-chart-title">Urgency probability distribution</div>
+          <div class="prob-chart">
+            <div class="prob-row">
+              <span class="prob-label emergency-label">Emergency</span>
+              <div class="prob-track"><div id="prob-bar-emergency" class="prob-bar prob-bar-emergency"></div></div>
+              <span id="prob-val-emergency" class="prob-val"></span>
+            </div>
+            <div class="prob-row">
+              <span class="prob-label urgent-label">Urgent</span>
+              <div class="prob-track"><div id="prob-bar-urgent" class="prob-bar prob-bar-urgent"></div></div>
+              <span id="prob-val-urgent" class="prob-val"></span>
+            </div>
+            <div class="prob-row">
+              <span class="prob-label routine-label">Routine</span>
+              <div class="prob-track"><div id="prob-bar-routine" class="prob-bar prob-bar-routine"></div></div>
+              <span id="prob-val-routine" class="prob-val"></span>
+            </div>
+          </div>
         </div>
 
         <div class="referral-card" id="referral-card">
@@ -44,6 +83,31 @@
             <h3>Recommended Specialist</h3>
             <p id="specialist-name"></p>
             <p id="specialist-reasoning" class="secondary-text"></p>
+
+            <!-- Feature 1: Specialist confidence bar -->
+            <div id="jev-referral-panel" class="jev-sub-panel hidden">
+              <div class="jev-metric-row">
+                <span class="jev-metric-label">Specialist confidence</span>
+                <div class="conf-track">
+                  <div id="specialist-conf-fill" class="conf-fill conf-fill-indigo"></div>
+                </div>
+                <span id="specialist-conf-pct" class="conf-pct"></span>
+              </div>
+              <!-- Feature 4: Hallucination resistance badge -->
+              <div class="constrained-badge">
+                Constrained to 12 specialist types · Cannot invent an answer
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature 5: Speed comparison panel -->
+        <div id="speed-panel" class="speed-panel hidden">
+          <div class="speed-panel-title">Agent Speed Breakdown</div>
+          <div id="speed-rows" class="speed-rows"></div>
+          <div class="speed-legend">
+            <span class="legend-dot legend-jev"></span> Jev (TypeSafe)
+            <span class="legend-dot legend-groq" style="margin-left:16px"></span> Groq LLM
           </div>
         </div>
 

@@ -1,3 +1,4 @@
+import time
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -33,8 +34,9 @@ def diagnosis_node(state: GraphState) -> GraphState:
         SystemMessage(content=DIAGNOSIS_SYSTEM_PROMPT),
         HumanMessage(content=symptoms.model_dump_json())
     ]
-    raw = _call_model(messages)
 
+    start = time.time()
+    raw = _call_model(messages)
     try:
         parsed = DiagnosisResult.model_validate_json(raw)
     except ValidationError:
@@ -42,9 +44,15 @@ def diagnosis_node(state: GraphState) -> GraphState:
             HumanMessage(content="Respond with valid JSON only matching the schema. No extra text.")
         ])
         parsed = DiagnosisResult.model_validate_json(raw)
+    duration_ms = int((time.time() - start) * 1000)
 
     return {
         **state,
         "diagnosis_result": parsed,
-        "agent_trace": state["agent_trace"] + [{"agent": "diagnosis", "output": parsed.model_dump()}]
+        "agent_trace": state["agent_trace"] + [{
+            "agent": "diagnosis",
+            "model": "groq/qwen3",
+            "output": parsed.model_dump(),
+            "duration_ms": duration_ms
+        }]
     }

@@ -5,3 +5,4 @@ langchain-groq
 langchain-core
 pydantic
 python-dotenv
+typesafe-sdk

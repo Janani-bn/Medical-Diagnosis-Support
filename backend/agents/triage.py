@@ -1,50 +1,64 @@
+import time
 from dotenv import load_dotenv
 load_dotenv()
 
-from langchain_groq import ChatGroq
-from langchain_core.messages import SystemMessage, HumanMessage
-from pydantic import ValidationError
+from typesafe_sdk import TypeSafeClient, Choice
 
 from state import GraphState
 from schemas import TriageResult
-from prompts import TRIAGE_SYSTEM_PROMPT
-
-_client = ChatGroq(model="qwen/qwen3.8-27b", timeout=30)
-
-
-def _extract_text(content) -> str:
-    if isinstance(content, str):
-        return content
-    if isinstance(content, list):
-        for block in content:
-            if isinstance(block, dict) and block.get("type") == "text":
-                return block["text"]
-    return str(content)
-
-
-def _call_model(messages: list) -> str:
-    response = _client.invoke(messages)
-    return _extract_text(response.content)
 
 
 def triage_node(state: GraphState) -> GraphState:
     symptoms = state["structured_symptoms"]
-    messages = [
-        SystemMessage(content=TRIAGE_SYSTEM_PROMPT),
-        HumanMessage(content=symptoms.model_dump_json())
-    ]
-    raw = _call_model(messages)
 
-    try:
-        parsed = TriageResult.model_validate_json(raw)
-    except ValidationError:
-        raw = _call_model(messages + [
-            HumanMessage(content="Respond with valid JSON only matching the schema. No extra text.")
-        ])
-        parsed = TriageResult.model_validate_json(raw)
+    start = time.time()
+    with TypeSafeClient() as client:
+        response = client.system_one(
+            model="jev-latest",
+            state={
+                "symptoms": symptoms.symptoms,
+                "duration": symptoms.duration,
+                "severity": symptoms.severity,
+                "age": symptoms.age,
+                "history": symptoms.history
+            },
+            questions={
+                "urgency": Choice(
+                    instructions="What is the urgency level for this patient based on their symptoms?",
+                    criteria={
+                        "emergency": "Life-threatening symptoms requiring immediate 911 or ER — chest pain, difficulty breathing, stroke signs (facial droop, arm weakness, slurred speech), severe uncontrolled bleeding, loss of consciousness, anaphylaxis, worst headache of life",
+                        "urgent": "Needs same-day or next-day medical attention but not immediately life-threatening — high fever, moderate pain, symptoms worsening over hours",
+                        "routine": "Can safely wait for a scheduled appointment — mild symptoms, stable condition, no red flags present"
+                    }
+                )
+            }
+        )
+    duration_ms = int((time.time() - start) * 1000)
+
+    urgency = response.choices["urgency"].choice
+    confidence = response.choices["urgency"].confidence
+    probabilities = dict(response.choices["urgency"].probabilities)
+
+    escalated = False
+    if confidence < 0.5 and urgency == "routine":
+        urgency = "urgent"
+        escalated = True
+        reason = f"Low-confidence triage ({confidence:.2f}) — elevated to urgent as precaution | Probabilities: {probabilities}"
+    else:
+        reason = f"Jev confidence: {confidence:.2f} | Probabilities: {probabilities}"
+
+    triage_result = TriageResult(urgency=urgency, reason=reason)
 
     return {
         **state,
-        "triage_result": parsed,
-        "agent_trace": state["agent_trace"] + [{"agent": "triage", "output": parsed.model_dump()}]
+        "triage_result": triage_result,
+        "agent_trace": state["agent_trace"] + [{
+            "agent": "triage",
+            "model": "jev-latest",
+            "output": triage_result.model_dump(),
+            "confidence": confidence,
+            "probabilities": probabilities,
+            "escalated": escalated,
+            "duration_ms": duration_ms
+        }]
     }

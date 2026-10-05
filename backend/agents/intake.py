@@ -1,3 +1,4 @@
+import time
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -32,8 +33,9 @@ def intake_node(state: GraphState) -> GraphState:
         SystemMessage(content=INTAKE_SYSTEM_PROMPT),
         HumanMessage(content=state["user_message"])
     ]
-    raw = _call_model(messages)
 
+    start = time.time()
+    raw = _call_model(messages)
     try:
         parsed = StructuredSymptoms.model_validate_json(raw)
     except ValidationError:
@@ -41,9 +43,15 @@ def intake_node(state: GraphState) -> GraphState:
             HumanMessage(content="Respond with valid JSON only matching the schema. No extra text.")
         ])
         parsed = StructuredSymptoms.model_validate_json(raw)
+    duration_ms = int((time.time() - start) * 1000)
 
     return {
         **state,
         "structured_symptoms": parsed,
-        "agent_trace": state["agent_trace"] + [{"agent": "intake", "output": parsed.model_dump()}]
+        "agent_trace": state["agent_trace"] + [{
+            "agent": "intake",
+            "model": "groq/qwen3",
+            "output": parsed.model_dump(),
+            "duration_ms": duration_ms
+        }]
     }
